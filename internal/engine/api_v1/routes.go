@@ -19,7 +19,7 @@ func NewRoutes(
 }
 
 func (v Routes) SetupRoutes(engine *gin.Engine) {
-	router := engine.Group("/api_v1")
+	router := engine.Group("/v1")
 	sysUser := router.Group("/sys_user")
 	{
 		sysUser.GET("/list", v.SysUserHandler.GetUserList)
