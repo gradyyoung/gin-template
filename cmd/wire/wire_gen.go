@@ -14,6 +14,7 @@ import (
 	"ygang.top/gin-template/internal/engine/api_v1"
 	"ygang.top/gin-template/internal/handler"
 	"ygang.top/gin-template/internal/service"
+	"ygang.top/gin-template/util"
 )
 
 // Injectors from wire.go:
@@ -22,7 +23,9 @@ func InitApplication() *gin.Engine {
 	applicationConfig := config.InitApplicationConfig()
 	db := database.NewDB(applicationConfig)
 	query := database.NewQuery(db)
-	sysUserService := service.NewSysUserService(query)
+	client := database.NewRedisClient(applicationConfig)
+	redisClient := util.NewRedisClient(client, applicationConfig)
+	sysUserService := service.NewSysUserService(query, redisClient)
 	sysUserHandler := handler.NewSysUserHandler(sysUserService)
 	routes := api_v1.NewRoutes(sysUserHandler)
 	ginEngine := engine.NewEngine(routes, applicationConfig)

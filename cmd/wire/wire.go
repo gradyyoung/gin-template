@@ -11,12 +11,14 @@ import (
 	"ygang.top/gin-template/internal/engine/api_v1"
 	"ygang.top/gin-template/internal/handler"
 	"ygang.top/gin-template/internal/service"
+	"ygang.top/gin-template/util"
 )
 
 func InitApplication() *gin.Engine {
 	wire.Build(
 		config.InitApplicationConfig,
 		database.ProviderSet,
+		util.NewRedisClient,
 		service.ProviderSet,
 		handler.ProviderSet,
 		api_v1.NewRoutes,

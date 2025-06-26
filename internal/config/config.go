@@ -17,10 +17,11 @@ type MySQL struct {
 }
 
 type Redis struct {
-	Host     string `yaml:"host" mapstructure:"host"`
-	Port     string `yaml:"port" mapstructure:"port"`
-	Password string `yaml:"password" mapstructure:"password"`
-	DB       int    `yaml:"db" mapstructure:"db"`
+	Host      string `yaml:"host" mapstructure:"host"`
+	Port      string `yaml:"port" mapstructure:"port"`
+	Password  string `yaml:"password" mapstructure:"password"`
+	DB        int    `yaml:"db" mapstructure:"db"`
+	KeyPrefix string `yaml:"key_prefix" mapstructure:"key_prefix"`
 }
 
 type ApplicationConfig struct {

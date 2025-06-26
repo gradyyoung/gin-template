@@ -3,15 +3,21 @@ package service
 import (
 	"ygang.top/gin-template/internal/dao"
 	"ygang.top/gin-template/internal/model"
+	"ygang.top/gin-template/util"
 )
 
 type SysUserService struct {
-	Q *dao.Query
+	Q           *dao.Query
+	RedisClient *util.RedisClient
 }
 
-func NewSysUserService(Q *dao.Query) *SysUserService {
+func NewSysUserService(
+	Q *dao.Query,
+	RedisClient *util.RedisClient,
+) *SysUserService {
 	return &SysUserService{
-		Q: Q,
+		Q:           Q,
+		RedisClient: RedisClient,
 	}
 }
 
