@@ -1,7 +1,9 @@
 package middleware
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"ygang.top/gin-template/internal/dto"
@@ -30,12 +32,13 @@ func (e *ErrorHandleMiddleware) Handler() gin.HandlerFunc {
 		// 处理错误
 		if len(ctx.Errors) > 0 {
 			err := ctx.Errors.Last().Err
+			logrus.Errorf("Error: %+v\n", err)
+			fmt.Printf("%T\n", err)
 			// 按照错误类型处理
-			switch e := err.(type) {
+			switch er := errors.Cause(err).(type) {
 			case *errs.SystemError:
-				ctx.JSON(http.StatusOK, dto.FailedResponse(e.Code, e.Error()))
+				ctx.JSON(http.StatusOK, dto.FailedResponse(er.Code, er.Error()))
 			default:
-				logrus.Errorf("Error: %+v\n", e)
 				ctx.JSON(http.StatusOK, dto.FailedMsgResponse(http.StatusInternalServerError, "服务器内部错误！"))
 			}
 		}

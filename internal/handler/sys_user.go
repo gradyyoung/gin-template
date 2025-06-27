@@ -34,7 +34,8 @@ func (h *SysUserHandler) UserLogin(ctx *gin.Context) {
 	password := ctx.PostForm("password")
 	token, err := h.SysUserService.UserLogin(username, password)
 	if err != nil {
-		ctx.Error(errors.Wrap(err, ""))
+		err := errors.Wrap(err, "")
+		ctx.Error(err)
 	} else {
 		ctx.JSON(http.StatusOK, dto.SuccessResponse(token, "登录成功"))
 	}
