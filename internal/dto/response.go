@@ -25,7 +25,16 @@ func SuccessResponse(data any, message string) *Response {
 	return NewResponse(http.StatusOK, true, message, data)
 }
 
-// ErrorResponse 错误响应
-func ErrorResponse(message string) *Response {
-	return NewResponse(http.StatusInternalServerError, false, message, nil)
+func FailedResponse(code int, message string) *Response {
+	return NewResponse(code, false, message, nil)
+}
+
+// FailedMsgResponse 错误响应，附加信息
+func FailedMsgResponse(code int, message string) *Response {
+	return FailedResponse(code, message)
+}
+
+// FailedErrResponse 错误响应
+func FailedErrResponse(code int, err error) *Response {
+	return FailedResponse(code, err.Error())
 }

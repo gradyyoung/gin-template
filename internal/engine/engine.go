@@ -13,13 +13,19 @@ type Router interface {
 }
 
 // NewEngine 创建一个 gin.Engine，并启动服务
-func NewEngine(routes Router, config *config.ApplicationConfig) *gin.Engine {
+func NewEngine(
+	routes Router,
+	config *config.ApplicationConfig,
+	errorHandleMiddleware *middleware.ErrorHandleMiddleware,
+	authMiddleware *middleware.AuthMiddleware,
+) *gin.Engine {
 	gin.ForceConsoleColor()
 	// 创建 gin.Engine
 	engine := gin.Default()
 	// 使用全局中间件
 	{
-		engine.Use(middleware.ErrorHandleMiddleware())
+		engine.Use(errorHandleMiddleware.Handler())
+		engine.Use(authMiddleware.Handler())
 	}
 	routes.SetupRoutes(engine)
 	engine.Run(fmt.Sprintf(":%d", config.Server.Port))

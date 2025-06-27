@@ -5,8 +5,21 @@ import (
 	"github.com/spf13/viper"
 )
 
+type ApplicationConfig struct {
+	Server Server `yaml:"server" mapstructure:"server"`
+	MySQL  MySQL  `yaml:"mysql" mapstructure:"mysql"`
+	Redis  Redis  `yaml:"redis" mapstructure:"redis"`
+}
+
 type Server struct {
-	Port int `yaml:"port" mapstructure:"port"`
+	Port int  `yaml:"port" mapstructure:"port"`
+	Auth Auth `yaml:"auth" mapstructure:"auth"`
+}
+
+type Auth struct {
+	Header       string   `yaml:"header" mapstructure:"header"`
+	TokenExpired int      `yaml:"token_expired" mapstructure:"token_expired"` // token 过期时间（分钟）
+	ExcludeUrls  []string `yaml:"exclude_urls" mapstructure:"exclude_urls"`
 }
 
 type MySQL struct {
@@ -22,12 +35,6 @@ type Redis struct {
 	Password  string `yaml:"password" mapstructure:"password"`
 	DB        int    `yaml:"db" mapstructure:"db"`
 	KeyPrefix string `yaml:"key_prefix" mapstructure:"key_prefix"`
-}
-
-type ApplicationConfig struct {
-	Server Server `yaml:"server" mapstructure:"server"`
-	MySQL  MySQL  `yaml:"mysql" mapstructure:"mysql"`
-	Redis  Redis  `yaml:"redis" mapstructure:"redis"`
 }
 
 // InitApplicationConfig 初始化项目配置

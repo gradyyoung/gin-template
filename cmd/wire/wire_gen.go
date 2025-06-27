@@ -12,6 +12,7 @@ import (
 	"ygang.top/gin-template/internal/database"
 	"ygang.top/gin-template/internal/engine"
 	"ygang.top/gin-template/internal/engine/api_v1"
+	"ygang.top/gin-template/internal/engine/middleware"
 	"ygang.top/gin-template/internal/handler"
 	"ygang.top/gin-template/internal/service"
 	"ygang.top/gin-template/util"
@@ -25,9 +26,11 @@ func InitApplication() *gin.Engine {
 	query := database.NewQuery(db)
 	client := database.NewRedisClient(applicationConfig)
 	redisClient := util.NewRedisClient(client, applicationConfig)
-	sysUserService := service.NewSysUserService(query, redisClient)
+	sysUserService := service.NewSysUserService(query, redisClient, applicationConfig)
 	sysUserHandler := handler.NewSysUserHandler(sysUserService)
 	routes := api_v1.NewRoutes(sysUserHandler)
-	ginEngine := engine.NewEngine(routes, applicationConfig)
+	errorHandleMiddleware := middleware.NewErrorHandleMiddleware()
+	authMiddleware := middleware.NewAuthMiddleware(applicationConfig, redisClient)
+	ginEngine := engine.NewEngine(routes, applicationConfig, errorHandleMiddleware, authMiddleware)
 	return ginEngine
 }

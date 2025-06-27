@@ -5,17 +5,25 @@ import (
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"ygang.top/gin-template/internal/dto"
+	"ygang.top/gin-template/internal/errs"
 )
 
-func ErrorHandleMiddleware() gin.HandlerFunc {
+type ErrorHandleMiddleware struct {
+}
+
+func NewErrorHandleMiddleware() *ErrorHandleMiddleware {
+	return &ErrorHandleMiddleware{}
+}
+
+func (e *ErrorHandleMiddleware) Handler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// 设置一个recover，防止应用崩溃
 		defer func() {
 			if err := recover(); err != nil {
-				// 记录堆栈信息
-				logrus.Errorf("Panic: %v\n", err)
+				// 记录异常
+				logrus.Errorf("Panic: %+v\n", err)
 				// 返回500错误
-				ctx.JSON(http.StatusInternalServerError, dto.ErrorResponse("服务器内部错误!"))
+				ctx.JSON(http.StatusOK, dto.FailedMsgResponse(http.StatusInternalServerError, "服务器内部错误！"))
 			}
 		}()
 		ctx.Next()
@@ -24,9 +32,11 @@ func ErrorHandleMiddleware() gin.HandlerFunc {
 			err := ctx.Errors.Last().Err
 			// 按照错误类型处理
 			switch e := err.(type) {
+			case *errs.SystemError:
+				ctx.JSON(http.StatusOK, dto.FailedResponse(e.Code, e.Error()))
 			default:
-				logrus.Errorf("Panic: %v\n", e)
-				ctx.JSON(http.StatusInternalServerError, dto.ErrorResponse("服务器内部错误!"))
+				logrus.Errorf("Error: %+v\n", e)
+				ctx.JSON(http.StatusOK, dto.FailedMsgResponse(http.StatusInternalServerError, "服务器内部错误！"))
 			}
 		}
 	}

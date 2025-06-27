@@ -37,9 +37,9 @@ func NewRedisClient(config *config.ApplicationConfig) *redis.Client {
 	ctx := context.Background()
 	pong, err := client.Ping(ctx).Result()
 	if err != nil {
-		logrus.Fatalf("Failed to connect to Redis:%s\n", err.Error())
+		logrus.Fatalf("Redis连接失败: %s\n", err.Error())
 		return nil
 	}
-	logrus.Infof("Connected to Redis:%s\n", pong)
+	logrus.Infof("连接到 Redis Ping: %s\n", pong)
 	return client
 }

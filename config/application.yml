@@ -1,5 +1,10 @@
 server:
   port: 8080
+  auth:
+    header: Authorization
+    token_expired: 30
+    exclude_urls:
+      - /sys_user/login
 
 mysql:
   dsn: root:123456@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Asia%2FShanghai
@@ -10,5 +15,5 @@ mysql:
 redis:
   host: localhost
   port: 6379
-  db: 1
+  db: 0
   key_prefix: gin-template
