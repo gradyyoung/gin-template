@@ -67,13 +67,12 @@ func main() {
 	g.UseDB(gormdb) // reuse your gorm db
 
 	// 自定义字段的数据类型
-	// 统一数字类型为int64,兼容protobuf
 	dataMap := map[string]func(detailType gorm.ColumnType) (dataType string){
 		"tinyint":   func(detailType gorm.ColumnType) (dataType string) { return "bool" },
-		"smallint":  func(detailType gorm.ColumnType) (dataType string) { return "int32" },
-		"mediumint": func(detailType gorm.ColumnType) (dataType string) { return "int32" },
-		"bigint":    func(detailType gorm.ColumnType) (dataType string) { return "uint32" },
-		"int":       func(detailType gorm.ColumnType) (dataType string) { return "uint32" },
+		"smallint":  func(detailType gorm.ColumnType) (dataType string) { return "int" },
+		"mediumint": func(detailType gorm.ColumnType) (dataType string) { return "int" },
+		"bigint":    func(detailType gorm.ColumnType) (dataType string) { return "int" },
+		"int":       func(detailType gorm.ColumnType) (dataType string) { return "int" },
 		"datetime":  func(detailType gorm.ColumnType) (dataType string) { return "config.Time" },
 	}
 	// 要先于`ApplyBasic`执行
