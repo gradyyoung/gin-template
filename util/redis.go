@@ -3,7 +3,6 @@ package util
 import (
 	"context"
 	"fmt"
-	"github.com/pkg/errors"
 	"github.com/redis/go-redis/v9"
 	"time"
 	"ygang.top/gin-template/internal/config"
@@ -37,7 +36,7 @@ func (r *RedisClient) Keys(pattern string) ([]string, error) {
 	key := r.getKey(pattern)
 	result, err := r.Client.Keys(ctx, key).Result()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get keys")
+		return nil, err
 	}
 	return result, nil
 }
@@ -49,7 +48,7 @@ func (r *RedisClient) Set(key, value string) error {
 	key = r.getKey(key)
 	err := r.Client.Set(ctx, key, value, 0).Err()
 	if err != nil {
-		return errors.Wrap(err, "failed to set key-value pair")
+		return err
 	}
 	return nil
 }
@@ -59,7 +58,7 @@ func (r *RedisClient) SetEX(key, value string, ex time.Duration) error {
 	key = r.getKey(key)
 	err := r.Client.Set(ctx, key, value, ex).Err()
 	if err != nil {
-		return errors.Wrap(err, "failed to set key-value pair with expiration")
+		return err
 	}
 	return nil
 }
@@ -69,7 +68,7 @@ func (r *RedisClient) Get(key string) (string, error) {
 	key = r.getKey(key)
 	value, err := r.Client.Get(ctx, key).Result()
 	if err != nil {
-		return "", errors.Wrap(err, "failed to get key value")
+		return "", err
 	}
 	return value, nil
 }
@@ -79,7 +78,7 @@ func (r *RedisClient) GetSet(key, value string) (string, error) {
 	key = r.getKey(key)
 	oldValue, err := r.Client.GetSet(ctx, key, value).Result()
 	if err != nil {
-		return "", errors.Wrap(err, "failed to get and set key value")
+		return "", err
 	}
 	return oldValue, nil
 }
@@ -89,7 +88,7 @@ func (r *RedisClient) Incr(key string) (int64, error) {
 	key = r.getKey(key)
 	newValue, err := r.Client.Incr(ctx, key).Result()
 	if err != nil {
-		return 0, errors.Wrap(err, "failed to increment key value")
+		return 0, err
 	}
 	return newValue, nil
 }
@@ -99,7 +98,7 @@ func (r *RedisClient) IncrBy(key string, incr int64) (int64, error) {
 	key = r.getKey(key)
 	newValue, err := r.Client.IncrBy(ctx, key, incr).Result()
 	if err != nil {
-		return 0, errors.Wrap(err, "failed to increment key value by specified amount")
+		return 0, err
 	}
 	return newValue, nil
 }
@@ -109,7 +108,7 @@ func (r *RedisClient) IncrByFloat(key string, incrFloat float64) (float64, error
 	key = r.getKey(key)
 	newValue, err := r.Client.IncrByFloat(ctx, key, incrFloat).Result()
 	if err != nil {
-		return 0, errors.Wrap(err, "failed to increment key value by float amount")
+		return 0, err
 	}
 	return newValue, nil
 }
@@ -119,7 +118,7 @@ func (r *RedisClient) Decr(key string) (int64, error) {
 	key = r.getKey(key)
 	newValue, err := r.Client.Decr(ctx, key).Result()
 	if err != nil {
-		return 0, errors.Wrap(err, "failed to decrement key value")
+		return 0, err
 	}
 	return newValue, nil
 }
@@ -129,7 +128,7 @@ func (r *RedisClient) DecrBy(key string, incr int64) (int64, error) {
 	key = r.getKey(key)
 	newValue, err := r.Client.DecrBy(ctx, key, incr).Result()
 	if err != nil {
-		return 0, errors.Wrap(err, "failed to decrement key value by specified amount")
+		return 0, err
 	}
 	return newValue, nil
 }
@@ -139,7 +138,7 @@ func (r *RedisClient) Del(key string) error {
 	key = r.getKey(key)
 	err := r.Client.Del(ctx, key).Err()
 	if err != nil {
-		return errors.Wrap(err, "failed to delete key")
+		return err
 	}
 	return nil
 }
@@ -149,7 +148,7 @@ func (r *RedisClient) Expire(key string, ex time.Duration) error {
 	key = r.getKey(key)
 	err := r.Client.Expire(ctx, key, ex).Err()
 	if err != nil {
-		return errors.Wrap(err, "failed to set key expiration")
+		return err
 	}
 	return nil
 }
@@ -161,7 +160,7 @@ func (r *RedisClient) LPush(key string, date ...interface{}) (int64, error) {
 	key = r.getKey(key)
 	result, err := r.Client.LPush(ctx, key, date).Result()
 	if err != nil {
-		return 0, errors.Wrap(err, "failed to push data to list from left")
+		return 0, err
 	}
 	return result, nil
 }
@@ -171,7 +170,7 @@ func (r *RedisClient) RPush(key string, date ...interface{}) (int64, error) {
 	key = r.getKey(key)
 	result, err := r.Client.RPush(ctx, key, date).Result()
 	if err != nil {
-		return 0, errors.Wrap(err, "failed to push data to list from right")
+		return 0, err
 	}
 	return result, nil
 }
@@ -181,7 +180,7 @@ func (r *RedisClient) LPop(key string) (string, error) {
 	key = r.getKey(key)
 	result, err := r.Client.LPop(ctx, key).Result()
 	if err != nil {
-		return "", errors.Wrap(err, "failed to pop data from list on the left")
+		return "", err
 	}
 	return result, nil
 }
@@ -191,7 +190,7 @@ func (r *RedisClient) RPop(key string) (string, error) {
 	key = r.getKey(key)
 	result, err := r.Client.RPop(ctx, key).Result()
 	if err != nil {
-		return "", errors.Wrap(err, "failed to pop data from list on the right")
+		return "", err
 	}
 	return result, nil
 }
@@ -201,7 +200,7 @@ func (r *RedisClient) LIndex(key string, index int64) (string, error) {
 	key = r.getKey(key)
 	result, err := r.Client.LIndex(ctx, key, index).Result()
 	if err != nil {
-		return "", errors.Wrap(err, "failed to get element by index in list")
+		return "", err
 	}
 	return result, nil
 }
@@ -211,7 +210,7 @@ func (r *RedisClient) LLen(key string) (int64, error) {
 	key = r.getKey(key)
 	result, err := r.Client.LLen(ctx, key).Result()
 	if err != nil {
-		return 0, errors.Wrap(err, "failed to get length of list")
+		return 0, err
 	}
 	return result, nil
 }
@@ -221,7 +220,7 @@ func (r *RedisClient) LRange(key string, start, stop int64) ([]string, error) {
 	key = r.getKey(key)
 	result, err := r.Client.LRange(ctx, key, start, stop).Result()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get range of elements in list")
+		return nil, err
 	}
 	return result, nil
 }
@@ -231,7 +230,7 @@ func (r *RedisClient) LRem(key string, count int64, data interface{}) error {
 	key = r.getKey(key)
 	err := r.Client.LRem(ctx, key, count, data).Err()
 	if err != nil {
-		return errors.Wrap(err, "failed to remove elements from list")
+		return err
 	}
 	return nil
 }
@@ -241,7 +240,7 @@ func (r *RedisClient) LInsert(key string, pivot int64, data interface{}) error {
 	key = r.getKey(key)
 	err := r.Client.LInsert(ctx, key, "after", pivot, data).Err()
 	if err != nil {
-		return errors.Wrap(err, "failed to insert element into list after pivot")
+		return err
 	}
 	return nil
 }
@@ -253,7 +252,7 @@ func (r *RedisClient) SAdd(key string, data ...interface{}) error {
 	key = r.getKey(key)
 	err := r.Client.SAdd(ctx, key, data).Err()
 	if err != nil {
-		return errors.Wrap(err, "failed to add elements to set")
+		return err
 	}
 	return nil
 }
@@ -263,7 +262,7 @@ func (r *RedisClient) SCard(key string) (int64, error) {
 	key = r.getKey(key)
 	result, err := r.Client.SCard(ctx, key).Result()
 	if err != nil {
-		return 0, errors.Wrap(err, "failed to get size of set")
+		return 0, err
 	}
 	return result, nil
 }
@@ -273,7 +272,7 @@ func (r *RedisClient) SIsMember(key string, data interface{}) (bool, error) {
 	key = r.getKey(key)
 	result, err := r.Client.SIsMember(ctx, key, data).Result()
 	if err != nil {
-		return false, errors.Wrap(err, "failed to check membership in set")
+		return false, err
 	}
 	return result, nil
 }
@@ -283,7 +282,7 @@ func (r *RedisClient) SMembers(key string) ([]string, error) {
 	key = r.getKey(key)
 	result, err := r.Client.SMembers(ctx, key).Result()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get all members of set")
+		return nil, err
 	}
 	return result, nil
 }
@@ -293,7 +292,7 @@ func (r *RedisClient) SRem(key string, data ...interface{}) error {
 	key = r.getKey(key)
 	err := r.Client.SRem(ctx, key, data).Err()
 	if err != nil {
-		return errors.Wrap(err, "failed to remove elements from set")
+		return err
 	}
 	return nil
 }
@@ -303,7 +302,7 @@ func (r *RedisClient) SPopN(key string, count int64) ([]string, error) {
 	key = r.getKey(key)
 	result, err := r.Client.SPopN(ctx, key, count).Result()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to pop random elements from set")
+		return nil, err
 	}
 	return result, nil
 }
@@ -315,7 +314,7 @@ func (r *RedisClient) HSet(key, field, value string) error {
 	key = r.getKey(key)
 	err := r.Client.HSet(ctx, key, field, value).Err()
 	if err != nil {
-		return errors.Wrap(err, "failed to set hash field value")
+		return err
 	}
 	return nil
 }
@@ -325,7 +324,7 @@ func (r *RedisClient) HGet(key, field string) (string, error) {
 	key = r.getKey(key)
 	result, err := r.Client.HGet(ctx, key, field).Result()
 	if err != nil {
-		return "", errors.Wrap(err, "failed to get hash field value")
+		return "", err
 	}
 	return result, nil
 }
@@ -335,7 +334,7 @@ func (r *RedisClient) HMGet(key string, fields ...string) ([]interface{}, error)
 	key = r.getKey(key)
 	result, err := r.Client.HMGet(ctx, key, fields...).Result()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get multiple hash field values")
+		return nil, err
 	}
 	return result, nil
 }
@@ -345,7 +344,7 @@ func (r *RedisClient) HGetAll(key string) (map[string]string, error) {
 	key = r.getKey(key)
 	result, err := r.Client.HGetAll(ctx, key).Result()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get all fields and values of hash")
+		return nil, err
 	}
 	return result, nil
 }
@@ -355,7 +354,7 @@ func (r *RedisClient) HKeys(key string) ([]string, error) {
 	key = r.getKey(key)
 	result, err := r.Client.HKeys(ctx, key).Result()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get all keys of hash")
+		return nil, err
 	}
 	return result, nil
 }
@@ -365,7 +364,7 @@ func (r *RedisClient) HLen(key string) (int64, error) {
 	key = r.getKey(key)
 	result, err := r.Client.HLen(ctx, key).Result()
 	if err != nil {
-		return 0, errors.Wrap(err, "failed to get length of hash")
+		return 0, err
 	}
 	return result, nil
 }
@@ -375,7 +374,7 @@ func (r *RedisClient) HMSet(key string, data map[string]interface{}) (bool, erro
 	key = r.getKey(key)
 	result, err := r.Client.HMSet(ctx, key, data).Result()
 	if err != nil {
-		return false, errors.Wrap(err, "failed to set multiple hash field values")
+		return false, err
 	}
 	return result, nil
 }
@@ -385,7 +384,7 @@ func (r *RedisClient) HSetNX(key, field string, value interface{}) error {
 	key = r.getKey(key)
 	err := r.Client.HSetNX(ctx, key, field, value).Err()
 	if err != nil {
-		return errors.Wrap(err, "failed to set hash field value if not exists")
+		return err
 	}
 	return nil
 }
@@ -395,7 +394,7 @@ func (r *RedisClient) HDel(key string, fields ...string) error {
 	key = r.getKey(key)
 	err := r.Client.HDel(ctx, key, fields...).Err()
 	if err != nil {
-		return errors.Wrap(err, "failed to delete hash fields")
+		return err
 	}
 	return nil
 }
@@ -405,7 +404,7 @@ func (r *RedisClient) HExists(key, field string) (bool, error) {
 	key = r.getKey(key)
 	result, err := r.Client.HExists(ctx, key, field).Result()
 	if err != nil {
-		return false, errors.Wrap(err, "failed to check existence of hash field")
+		return false, err
 	}
 	return result, nil
 }

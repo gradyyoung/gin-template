@@ -27,16 +27,3 @@ func (h *SysUserHandler) GetUserList(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, dto.SuccessResponse(list, "获取用户列表成功"))
 	}
 }
-
-// UserLogin 用户登录
-func (h *SysUserHandler) UserLogin(ctx *gin.Context) {
-	username := ctx.PostForm("username")
-	password := ctx.PostForm("password")
-	token, err := h.SysUserService.UserLogin(username, password)
-	if err != nil {
-		err := errors.Wrap(err, "")
-		ctx.Error(err)
-	} else {
-		ctx.JSON(http.StatusOK, dto.SuccessResponse(token, "登录成功"))
-	}
-}

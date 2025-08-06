@@ -23,6 +23,5 @@ func (v Routes) SetupRoutes(engine *gin.Engine) {
 	sysUser := router.Group("/sys_user")
 	{
 		sysUser.GET("/list", v.SysUserHandler.GetUserList)
-		sysUser.POST("/login", v.SysUserHandler.UserLogin)
 	}
 }

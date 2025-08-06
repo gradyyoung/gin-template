@@ -9,6 +9,7 @@ package wire
 import (
 	"github.com/gin-gonic/gin"
 	"ygang.top/gin-template/internal/config"
+	"ygang.top/gin-template/internal/dao"
 	"ygang.top/gin-template/internal/database"
 	"ygang.top/gin-template/internal/engine"
 	"ygang.top/gin-template/internal/engine/api_v1"
@@ -23,10 +24,10 @@ import (
 func InitApplication() *gin.Engine {
 	applicationConfig := config.InitApplicationConfig()
 	db := database.NewDB(applicationConfig)
-	query := database.NewQuery(db)
+	sysUserDao := dao.NewSysUserDao(db)
 	client := database.NewRedisClient(applicationConfig)
 	redisClient := util.NewRedisClient(client, applicationConfig)
-	sysUserService := service.NewSysUserService(query, redisClient, applicationConfig)
+	sysUserService := service.NewSysUserService(sysUserDao, redisClient, applicationConfig)
 	sysUserHandler := handler.NewSysUserHandler(sysUserService)
 	routes := api_v1.NewRoutes(sysUserHandler)
 	errorHandleMiddleware := middleware.NewErrorHandleMiddleware()

@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
 	"ygang.top/gin-template/internal/config"
+	"ygang.top/gin-template/internal/dao"
 	"ygang.top/gin-template/internal/database"
 	"ygang.top/gin-template/internal/engine"
 	"ygang.top/gin-template/internal/engine/api_v1"
@@ -20,6 +21,7 @@ func InitApplication() *gin.Engine {
 		config.InitApplicationConfig,
 		database.ProviderSet,
 		util.NewRedisClient,
+		dao.ProviderSet,
 		service.ProviderSet,
 		handler.ProviderSet,
 		middleware.ProviderSet,

@@ -8,15 +8,11 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-// 更新会覆盖原有文件，所以通过 g.GenerateModel("oss", fieldOpts...) 指定需要更新的表，不要全部覆盖
-
 const DBDSN = "root:123456@(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
 
 func main() {
 	cfg := gen.Config{
-		OutPath:      "./internal/dao",   // 生成查询方法的目录
 		ModelPkgPath: "./internal/model", // 结构体生成目录
-		Mode:         gen.WithoutContext | gen.WithDefaultQuery | gen.WithQueryInterface,
 		// 表字段可为 null 值时, 对应结体字段使用指针类型
 		FieldNullable: true,
 
@@ -73,53 +69,24 @@ func main() {
 		"mediumint": func(detailType gorm.ColumnType) (dataType string) { return "int" },
 		"bigint":    func(detailType gorm.ColumnType) (dataType string) { return "int" },
 		"int":       func(detailType gorm.ColumnType) (dataType string) { return "int" },
-		"datetime":  func(detailType gorm.ColumnType) (dataType string) { return "config.Time" },
+		// 这里将数据库中的`datetime`映射为`config.Time`，方便我们序列化和反序列化
+		"datetime": func(detailType gorm.ColumnType) (dataType string) { return "config.Time" },
 	}
 	// 要先于`ApplyBasic`执行
 	g.WithDataTypeMap(dataMap)
-	// 自定义模型结体字段的标签
-	// 将特定字段名的 json 标签加上`string`属性,即 MarshalJSON 时该字段由数字类型转成字符串类型
-	//jsonField := gen.FieldJSONTagWithNS(func(columnName string) (tagContent string) {
-	//	toStringField := `balance, `
-	//	if strings.Contains(toStringField, columnName) {
-	//		return columnName + ",string"
-	//	}
-	//	return columnName
-	//})
-	//delField := gen.FieldType("deleted_at", "time.Time") // 不生成 默认的类型
-	//sizeField := gen.FieldType("size", "uint64")         // 不生成 默认的类型
 	// 将非默认字段名的字段定义为自动时间戳和软删除字段;
-	// 自动时间戳默认字段名为:`updated_at`、`created_at, 表字段数据类型为: INT 或 DATETIME
-	// 软删除默认字段名为:`deleted_at`, 表字段数据类型为: DATETIME
 	autoUpdateTimeField := gen.FieldGORMTag("update_time", func(tag field.GormTag) field.GormTag {
 		return tag.Set("autoUpdateTime")
 	})
 	autoCreateTimeField := gen.FieldGORMTag("create_time", func(tag field.GormTag) field.GormTag {
 		return tag.Set("autoCreateTime")
 	})
-	//softDeleteField := gen.FieldType("delete_time", "soft_delete.DeletedAt")
+
 	// 模型自定义选项组
 	fieldOpts := []gen.ModelOpt{autoUpdateTimeField, autoCreateTimeField}
 
-	// 创建模型的结构体,生成文件在 model 目录; 先创建的结果会被后面创建的覆盖
-	// 这里创建个别模型仅仅是为了拿到`*generate.QueryStructMeta`类型对象用于后面的模型关联操作中
-	// Address := g.GenerateModel("address")
-
 	// 创建 全部模型文件 , 并覆盖前面创建的同名模型
-	allModel := g.GenerateAllTable(fieldOpts...)
-
-	// 指定特定的表名
-	//models := []interface{}{
-	//	g.GenerateModel("workspace_subscribe_log", fieldOpts...),
-	//	g.GenerateModel("workspace_bill_log", fieldOpts...),
-	//	g.GenerateModel("workspace_version", fieldOpts...),
-	//	g.GenerateModel("storage_usage", fieldOpts...),
-	//	g.GenerateModel("inbox", fieldOpts...),
-	//}
-
-	// 创建模型的方法,生成文件在 query 目录; 先创建结果不会被后创建的覆盖
-	g.ApplyBasic()
-	g.ApplyBasic(allModel...)
+	g.GenerateAllTable(fieldOpts...)
 
 	g.Execute()
 }

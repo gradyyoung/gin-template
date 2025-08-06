@@ -7,7 +7,6 @@ import (
 	"gorm.io/gorm/logger"
 	"time"
 	"ygang.top/gin-template/internal/config"
-	"ygang.top/gin-template/internal/dao"
 )
 
 // NewDB 创建数据库连接
@@ -31,8 +30,4 @@ func NewDB(config *config.ApplicationConfig) *gorm.DB {
 	sqlDB.SetConnMaxLifetime(time.Duration(config.MySQL.ConnMaxLifetime) * time.Second) // 设置了连接可复用的最大时间
 	logrus.Infof("成功连接到数据库！")
 	return db
-}
-
-func NewQuery(db *gorm.DB) *dao.Query {
-	return dao.Use(db)
 }
