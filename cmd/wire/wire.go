@@ -9,24 +9,24 @@ import (
 	"ygang.top/gin-template/internal/dao"
 	"ygang.top/gin-template/internal/database"
 	"ygang.top/gin-template/internal/engine"
-	"ygang.top/gin-template/internal/engine/api_v1"
 	"ygang.top/gin-template/internal/engine/middleware"
+	routes "ygang.top/gin-template/internal/engine/v1"
 	"ygang.top/gin-template/internal/handler"
 	"ygang.top/gin-template/internal/service"
-	"ygang.top/gin-template/util"
+	"ygang.top/gin-template/internal/utils"
 )
 
 func InitApplication() *gin.Engine {
 	wire.Build(
 		config.InitApplicationConfig,
 		database.ProviderSet,
-		util.NewRedisClient,
+		utils.NewRedisClient,
 		dao.ProviderSet,
 		service.ProviderSet,
 		handler.ProviderSet,
 		middleware.ProviderSet,
-		api_v1.NewRoutes,
-		wire.Bind(new(engine.Router), new(*api_v1.Routes)), // 绑定接口
+		routes.NewRoutes,
+		wire.Bind(new(engine.Router), new(*routes.Routes)), // 绑定接口
 		engine.NewEngine,
 	)
 	return nil

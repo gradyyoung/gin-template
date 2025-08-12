@@ -12,11 +12,11 @@ import (
 	"ygang.top/gin-template/internal/dao"
 	"ygang.top/gin-template/internal/database"
 	"ygang.top/gin-template/internal/engine"
-	"ygang.top/gin-template/internal/engine/api_v1"
 	"ygang.top/gin-template/internal/engine/middleware"
+	"ygang.top/gin-template/internal/engine/v1"
 	"ygang.top/gin-template/internal/handler"
 	"ygang.top/gin-template/internal/service"
-	"ygang.top/gin-template/util"
+	"ygang.top/gin-template/internal/utils"
 )
 
 // Injectors from wire.go:
@@ -26,10 +26,10 @@ func InitApplication() *gin.Engine {
 	db := database.NewDB(applicationConfig)
 	sysUserDao := dao.NewSysUserDao(db)
 	client := database.NewRedisClient(applicationConfig)
-	redisClient := util.NewRedisClient(client, applicationConfig)
+	redisClient := utils.NewRedisClient(client, applicationConfig)
 	sysUserService := service.NewSysUserService(sysUserDao, redisClient, applicationConfig)
 	sysUserHandler := handler.NewSysUserHandler(sysUserService)
-	routes := api_v1.NewRoutes(sysUserHandler)
+	routes := v1.NewRoutes(sysUserHandler)
 	errorHandleMiddleware := middleware.NewErrorHandleMiddleware()
 	authMiddleware := middleware.NewAuthMiddleware(applicationConfig, redisClient)
 	ginEngine := engine.NewEngine(routes, applicationConfig, errorHandleMiddleware, authMiddleware)

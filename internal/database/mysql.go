@@ -1,18 +1,36 @@
 package database
 
 import (
+	"strings"
+	"time"
+
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"time"
 	"ygang.top/gin-template/internal/config"
 )
+
+// getLogLevel 根据配置字符串返回对应的日志级别
+func getLogLevel(level string) logger.LogLevel {
+	switch strings.ToLower(level) {
+	case "silent":
+		return logger.Silent
+	case "error":
+		return logger.Error
+	case "warn":
+		return logger.Warn
+	case "info":
+		return logger.Info
+	default:
+		return logger.Info
+	}
+}
 
 // NewDB 创建数据库连接
 func NewDB(config *config.ApplicationConfig) *gorm.DB {
 	db, err := gorm.Open(mysql.Open(config.MySQL.DSN), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info), // 设置日志级别
+		Logger: logger.Default.LogMode(getLogLevel(config.MySQL.LogLevel)), // 设置日志级别
 	})
 	if err != nil {
 		logrus.Fatalf("数据库连接失败，%s", err.Error())

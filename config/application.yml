@@ -11,9 +11,38 @@ mysql:
   max_idle_conns: 10
   max_open_conns: 100
   conn_max_lifetime: 60
+  log_level: info  # 日志级别: silent, error, warn, info
 
 redis:
   host: localhost
   port: 6379
   db: 0
+  password: ""
   key_prefix: gin-template
+  # 连接池配置
+  pool_size: 15
+  min_idle_conns: 10
+  # 超时配置（秒）
+  dial_timeout: 5
+  read_timeout: 3
+  write_timeout: 3
+  pool_timeout: 4
+  # 重试策略
+  max_retries: 0
+  min_retry_backoff: 8  # 毫秒
+  max_retry_backoff: 512  # 毫秒
+
+# 日志配置
+log:
+  output: stdout  # 输出位置: stdout, stderr, file
+  level: info     # 日志级别: trace, debug, info, warn, error, fatal, panic
+  format: nested  # 日志格式: nested, json, text
+  report_caller: true
+  hide_keys: true
+  show_full_level: false
+  no_colors: false
+  timestamp_format: "2006-01-02 15:04:05"
+
+# 时间格式配置
+time:
+  format: "2006-01-02 15:04:05"

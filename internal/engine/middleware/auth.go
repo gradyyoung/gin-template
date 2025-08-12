@@ -1,23 +1,24 @@
 package middleware
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 	"ygang.top/gin-template/internal/config"
 	"ygang.top/gin-template/internal/dto"
 	"ygang.top/gin-template/internal/errs"
-	"ygang.top/gin-template/util"
+	"ygang.top/gin-template/internal/utils"
 )
 
 type AuthMiddleware struct {
 	Config      *config.ApplicationConfig
-	RedisClient *util.RedisClient
+	RedisClient *utils.RedisClient
 }
 
 func NewAuthMiddleware(
 	config *config.ApplicationConfig,
-	redisClient *util.RedisClient,
+	redisClient *utils.RedisClient,
 ) *AuthMiddleware {
 	return &AuthMiddleware{
 		Config:      config,

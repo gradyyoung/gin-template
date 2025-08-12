@@ -1,11 +1,12 @@
 package middleware
 
 import (
+	"net/http"
+	"runtime/debug"
+
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"net/http"
-	"runtime/debug"
 	"ygang.top/gin-template/internal/dto"
 	"ygang.top/gin-template/internal/errs"
 )
